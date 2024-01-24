@@ -29,6 +29,8 @@ module.exports = class Product {
   }
 
   save() {
+    // 고유한 아이디 생성, (동적 세부 페이지를 위해)
+    this.id = Math.random().toString();
     // products.push(this);
     getProductsFromFile((products) => {
       products.push(this);
