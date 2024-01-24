@@ -22,7 +22,9 @@ exports.getProduct = (req, res, next) => {
 exports.getProduct = (req, res, next) => {
   // params뒤의 아이디는, 다이나믹 라우팅으로 설정한 이름
   const prodId = req.params.productId;
-  console.log(prodId);
+  Product.findById(prodId, (product) => {
+    console.log(product);
+  });
   res.redirect('/');
 };
 

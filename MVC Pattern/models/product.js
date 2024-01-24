@@ -45,4 +45,12 @@ module.exports = class Product {
     // return this.products;
     getProductsFromFile(cb);
   }
+
+  static findById(id, cb) {
+    // 제품 검색을 마치면 실행할 콜백이 인수로 들어감.
+    getProductsFromFile((products) => {
+      const product = products.find((p) => p.id === id);
+      cb(product);
+    });
+  }
 };
