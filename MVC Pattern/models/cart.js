@@ -7,7 +7,6 @@ const p = path.join(
   'cart.json'
 );
 
-// 장바구니는 우리 프로젝트에서, 독립된 대상으로 볼 수 있기 떄문에, 따로 models에서 파일 분리!
 module.exports = class Cart {
   static addProduct(id, productPrice) {
     // Fetch the previous cart
@@ -22,6 +21,7 @@ module.exports = class Cart {
       );
       const existingProduct = cart.products[existingProductIndex];
       let updatedProduct;
+      // Add new product/ increase quantity
       if (existingProduct) {
         updatedProduct = { ...existingProduct };
         updatedProduct.qty = updatedProduct.qty + 1;
@@ -31,23 +31,23 @@ module.exports = class Cart {
         updatedProduct = { id: id, qty: 1 };
         cart.products = [...cart.products, updatedProduct];
       }
-      //   updated Price
       cart.totalPrice = cart.totalPrice + +productPrice;
       fs.writeFile(p, JSON.stringify(cart), (err) => {
         console.log(err);
       });
     });
-    // Add new product / increase quantity
   }
 
   static deleteProduct(id, productPrice) {
     fs.readFile(p, (err, fileContent) => {
       if (err) {
-        // 삭제할 제품이 없으므로 무시
         return;
       }
-      const updatedCart = { ...JSON.parse(fileCOntent) };
+      const updatedCart = { ...JSON.parse(fileContent) };
       const product = updatedCart.products.find((prod) => prod.id === id);
+      if (!product) {
+        return;
+      }
       const productQty = product.qty;
       updatedCart.products = updatedCart.products.filter(
         (prod) => prod.id !== id
@@ -58,6 +58,17 @@ module.exports = class Cart {
       fs.writeFile(p, JSON.stringify(updatedCart), (err) => {
         console.log(err);
       });
+    });
+  }
+
+  static getCart(cb) {
+    fs.readFile(p, (err, fileContent) => {
+      const cart = JSON.parse(fileContent);
+      if (err) {
+        cb(null);
+      } else {
+        cb(cart);
+      }
     });
   }
 };
